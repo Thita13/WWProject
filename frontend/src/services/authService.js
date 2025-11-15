@@ -1,20 +1,44 @@
-// src/services/authService.js
-import api from './api';
+// frontend/src/services/authService.js
 
-// ฟังก์ชันสำหรับ Login
+import api from './api.js';
+
+import { jwtDecode } from 'jwt-decode'; //ตัวถอดรหัส Token
+
+// ฟังก์ชันสำหรับ Login (อัปเดต)
 const login = async (name_user, password) => {
-  // ยิงไปที่ POST /api/auth/login
   const response = await api.post('/auth/login', {
     name_user,
     password,
   });
   
-  // ถ้า login สำเร็จ และได้ token กลับมา
   if (response.data.token) {
-    // เก็บ token ไว้ใน localStorage
-    localStorage.setItem('token', response.data.token);
+    const token = response.data.token;
+    
+    // 2. (สำคัญ!) ถอดรหัส token เพื่อเอา Role
+    const user = jwtDecode(token); // ⬅️ นี่คือส่วนที่หายไป
+
+    // 3. (อัปเดต!) เก็บ cả token และ ข้อมูล user
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user)); // เก็บเป็น JSON string
+
+    // 4. (สำคัญ!) ส่ง "user" (ที่มี role) กลับไปให้ Login.jsx
+    return user; 
   }
-  return response.data;
+  
+  return null; // ถ้าไม่สำเร็จ ให้ส่ง null
+};
+
+// ฟังก์ชันสำหรับ Logout (อัปเดต)
+const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user'); // ลบ user ออกด้วย
+};
+
+// ฟังก์ชันสำหรับดึงข้อมูล user ปัจจุบัน (สำหรับ ProtectedRoute)
+const getCurrentUser = () => {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return null;
+  return JSON.parse(userStr);
 };
 
 // ฟังก์ชันสำหรับ Register
@@ -34,13 +58,9 @@ const register = async (name_user, password, role) => {
   return response.data;
 };
 
-// ฟังก์ชันสำหรับ Logout
-const logout = () => {
-  localStorage.removeItem('token');
-};
-
 export default {
   login,
   register,
   logout,
+  getCurrentUser,
 };
