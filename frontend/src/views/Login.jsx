@@ -16,12 +16,26 @@ function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault(); 
         try {
-            // 4. เรียกใช้ authService.login
-            await authService.login(nameUser, password);
+            //  ต้องรับ "user" ที่มี role กลับมา
+            const user = await authService.login(nameUser, password);
             
-            console.log('Login สำเร็จ!');
-            // 5. ถ้าสำเร็จ ให้เด้งไปหน้า Dashboard (สมมติว่าคือ /)
-            navigate('/'); 
+            console.log('Login สำเร็จ, Role:', user.role); // ⬅️ คุณจะเห็น Role ใน Console
+            
+            //  ใช้ switch-case เพื่อส่ง user ไปถูกที่
+            //    (ใช้ Path ตัวพิมพ์เล็ก ให้ตรงกับ App.jsx)
+            switch (user.role) {
+              case 'admin':
+                navigate('/admin'); // ⬅️ ไปที่ /admin
+                break;
+              case 'staff':
+                navigate('/staff'); // ⬅️ ไปที่ /staff
+                break;
+              case 'user':
+                navigate('/dashboard'); // ⬅️ ไปที่ /dashboard (d เล็ก)
+                break;
+              default:
+                navigate('/dashboard'); // ⬅️ หน้า Default
+            }
 
         } catch (error) {
             console.error('Login ล้มเหลว:', error);

@@ -1,0 +1,14 @@
+import React from 'react';
+
+// (นี่คือ Component Dashboard ของ Admin ที่เราจะสร้างจากรูป)
+function StaffDashboard() {
+  return (
+    <div>
+      <h2>หน้า Dashboard (สำหรับ Staff)</h2>
+      {/* เดี๋ยวเราจะมาสร้างตาราง Ticket และกราฟที่นี่ */}
+    </div>
+  );
+}
+
+// (สำคัญ!) นี่คือบรรทัดที่หายไป
+export default StaffDashboard;
