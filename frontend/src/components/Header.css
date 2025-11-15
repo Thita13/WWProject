@@ -1,0 +1,51 @@
+/* frontend/src/components/Header.css */
+
+.header {
+  display: flex;
+  justify-content: space-between; /* ⬅️ ดัน Profile ไปขวาสุด */
+  align-items: center;
+  padding: 20px; /* ⬅️ เว้นระยะบน-ล่าง */
+  border-bottom: 1px solid #ffffff;
+  margin-bottom: 30px; /* ⬅️ ดัน Content (การ์ด) ลงไป */
+}
+
+/* --- ส่วน Profile (ขวา) --- */
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* ⬅️ ระยะห่างระหว่าง Avatar กับ Text */
+}
+
+.avatar {
+  /* (สไตล์จากรูป image_3f4dc0.png) */
+  background-color: #cceeff; /* ⬅️ สีฟ้าอ่อน */
+  color: #007bff; /* ⬅️ สีตัวอักษรฟ้าเข้ม */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.user-info {
+  text-align: left;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #6c757d; /* ⬅️ สีเทา */
+}

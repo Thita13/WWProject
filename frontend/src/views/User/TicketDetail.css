@@ -1,0 +1,169 @@
+/* src/views/User/TicketDetail.css */
+
+/* --- 1. Layout หลัก (ทั้งหน้า) --- */
+.user-ticketdetail-page {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* 1. การ์ดข้อมูล Ticket (กล่องสีขาวกล่องแรก) */
+.ticket-info-card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  margin-bottom: 30px; /* เว้นช่องไฟก่อนถึงกล่อง Comment */
+}
+
+/* 2. แถวข้อมูล (ID, Title, Status) */
+.info-row {
+  /* (สำคัญ!) ใช้ Grid 2 คอลัมน์ (Label, Value) */
+  display: grid;
+  grid-template-columns: 150px 1fr; /* Label กว้าง 150px, Value ที่เหลือ */
+  gap: 10px;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row strong {
+  font-weight: 600;
+  color: #333;
+}
+
+.info-row span {
+  color: #797878;
+}
+
+/* 3. จัดการ Description ให้นสวยงาม */
+.info-row .desc { 
+  grid-column: 1 / -1; /* ทำให้ Description กินเต็ม 2 คอลัมน์ */
+  margin-top: 10px;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-wrap; /* (สำคัญ!) ทำให้ \n (ขึ้นบรรทัดใหม่) แสดงผล */
+}
+
+/* 4. ปุ่มลบ (Delete) */
+.action-btns {
+  margin-top: 1.5rem;
+  text-align: right; /* ดันปุ่มไปขวา */
+}
+
+.delete-btn {
+  padding: 0.6rem 1.2rem;
+  background: #C93E40; /* สีแดง (เหมือน Closed) */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: #a13234;
+}
+
+.delete-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* 6. กล่อง Comment (กล่องสีขาวกล่องที่ 2) */
+.comment-section {
+  background: #ffffff;
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.comment-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+
+/* 7. List ของ Comment (Chat) */
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  max-height: 400px; /* จำกัดความสูง ถ้า Comment เยอะ */
+  overflow-y: auto;  /* ให้ Scroll ได้ */
+  padding: 10px;
+}
+
+.comment-item {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f4f4f4; /* สีเทา (ของ Staff/คนอื่น) */
+  max-width: 80%;
+  align-self: flex-start; /* ชิดซ้าย */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* เพิ่มเงาเล็กน้อย */
+}
+
+/* 8. (สำคัญ!) Comment ของ "เรา" */
+.comment-item.me {
+  background: #e0eaff; /* สีฟ้า (ของเรา) */
+  align-self: flex-end; /* ชิดขวา */
+}
+
+.comment-sender {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.comment-item.me .comment-sender {
+   color: #0056b3; /* สีน้ำเงินเข้มสำหรับชื่อเรา */
+}
+
+.comment-text {
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: #333;
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: right;
+  margin-top: 0.5rem;
+}
+
+/* 9. กล่องพิมพ์ Comment */
+.comment-input-box textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  resize: vertical;
+  min-height: 80px; /* กำหนดความสูงขั้นต่ำ */
+  margin-bottom: 1rem;
+}
+
+.send-btn {
+  padding: 0.6rem 1.5rem;
+  background: #4A2DBE; /* สีม่วง (สีหลัก) */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  float: right; /* ดันปุ่มส่งไปขวา */
+  transition: background 0.3s ease;
+}
+
+.send-btn:hover {
+  background: #3a229a;
+}

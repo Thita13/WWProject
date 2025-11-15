@@ -1,8 +1,7 @@
 // frontend/src/services/authService.js
 
 import api from './api.js';
-
-import { jwtDecode } from 'jwt-decode'; //ตัวถอดรหัส Token
+import { jwtDecode } from 'jwt-decode'; // ตัวถอดรหัส Token
 
 // ฟังก์ชันสำหรับ Login (อัปเดต)
 const login = async (name_user, password) => {
@@ -14,14 +13,14 @@ const login = async (name_user, password) => {
   if (response.data.token) {
     const token = response.data.token;
     
-    // 2. (สำคัญ!) ถอดรหัส token เพื่อเอา Role
-    const user = jwtDecode(token); // ⬅️ นี่คือส่วนที่หายไป
+    // (สำคัญ!) ถอดรหัส token เพื่อเอา Role
+    const user = jwtDecode(token); 
 
-    // 3. (อัปเดต!) เก็บ cả token และ ข้อมูล user
+    // (อัปเดต!) เก็บ cả token และ ข้อมูล user
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user)); // เก็บเป็น JSON string
 
-    // 4. (สำคัญ!) ส่ง "user" (ที่มี role) กลับไปให้ Login.jsx
+    // (สำคัญ!) ส่ง "user" (ที่มี role) กลับไปให้ Login.jsx
     return user; 
   }
   
@@ -43,21 +42,25 @@ const getCurrentUser = () => {
 
 // ฟังก์ชันสำหรับ Register
 const register = async (name_user, password, role) => {
-  // ยิงไปที่ POST /api/auth/register
   const response = await api.post('/auth/register', {
     name_user,
     password,
     role: role || 'user',
   });
   
-  // ถ้า register สำเร็จ และได้ token กลับมา
   if (response.data.token) {
-    // เก็บ token ไว้ใน localStorage (เพื่อให้ login อัตโนมัติ)
-    localStorage.setItem('token', response.data.token);
+    // (ถ้าอยากให้ Register แล้ว Login เลย ก็ทำเหมือน Login)
+    const token = response.data.token;
+    const user = jwtDecode(token); 
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    return user;
   }
-  return response.data;
+  return null;
 };
 
+// (สำคัญ!) นี่คือบรรทัดที่พัง
+// ต้องมี "export default" แค่ "อันเดียว"
 export default {
   login,
   register,
