@@ -2,17 +2,14 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-// import App from './App.jsx'
-import LoginPage from './views/Login.jsx';
+import App from './App.jsx'
 
-// 1. (สำคัญ!) Import BrowserRouter
-import { BrowserRouter } from 'react-router-dom'
+// 1. (ลบทิ้ง!) ไม่ต้อง import BrowserRouter ที่นี่
+// import { BrowserRouter } from 'react-router-dom'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* 2. (สำคัญ!) หุ้ม <App /> ด้วย <BrowserRouter> */}
-    <BrowserRouter>
-      <LoginPage />
-    </BrowserRouter>
+    {/* 2. เรียก <App /> ตรงๆ ได้เลย */}
+    <App />
   </React.StrictMode>,
 )
