@@ -14,11 +14,6 @@ const register = async (req, res) => {
     return res.status(400).json({ message: 'Name and password are required' });
   }
 
-  // ⭐️ ข้อควรระวัง: การเก็บรหัสผ่านแบบนี้ (plain text) ไม่ปลอดภัยอย่างยิ่ง
-  // ⭐️ ในโปรเจกต์จริง ควรใช้ library เช่น bcrypt เพื่อ hash รหัสผ่านก่อน
-  // ⭐️ const hashedPassword = await bcrypt.hash(password, 10);
-  // ⭐️ แล้วค่อยเก็บ hashedPassword ลง DB
-
   try {
     // 3. เช็คก่อนว่ามี name_user นี้ในระบบแล้วหรือยัง
     const [existingUser] = await db.query(
@@ -46,7 +41,8 @@ const register = async (req, res) => {
     // 7. สร้าง Token ให้ user ใหม่ (เพื่อให้ login อัตโนมัติ)
     const token = generateToken({
       id: newUserId,
-      role: userRole
+      role: userRole,
+      name_user: name_user
     });
 
     // 8. ส่ง token กลับไป (สถานะ 201 = Created)
@@ -67,32 +63,30 @@ const login = async (req, res) => {
   const { name_user, password } = req.body;
 
   try {
-    // 1️⃣ (แก้ไขแล้ว!) ใช้ 'id' ให้ตรงกับ schema.sql
+    // 1 (แก้ไขแล้ว!) ใช้ 'id' ให้ตรงกับ schema.sql
     // ถ้าคุณใช้ 'id_users' โค้ดจะพังเพราะ "Unknown column 'id_users'"
     const [rows] = await db.query(
       'SELECT id, name_user, password, role FROM users WHERE name_user = ?',
       [name_user]
     );
 
-    // 2️⃣ ตรวจสอบว่ามี user ใน DB และ password ตรงไหม
-    // ⭐️ ถ้าใช้ bcrypt ต้องเปลี่ยนตรงนี้เป็น:
-    // ⭐️ const isMatch = await bcrypt.compare(password, rows[0].password);
-    // ⭐️ if (rows.length === 0 || !isMatch) { ... }
+    // 2 ตรวจสอบว่ามี user ใน DB และ password ตรงไหม
     if (rows.length === 0 || rows[0].password !== password) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // 3️⃣ (แก้ไขแล้ว!) สร้าง JWT token โดยใช้ 'id' (ไม่ใช่ id_users)
+    // 3 (แก้ไขแล้ว!) สร้าง JWT token โดยใช้ 'id' (ไม่ใช่ id_users)
     const token = generateToken({
       id: rows[0].id, // map id → id ใน token
-      role: rows[0].role
+      role: rows[0].role, // map role → role ใน token
+      name_user: rows[0].name_user // เพิ่ม name_user เข้าไปใน token
     });
 
-    // 4️⃣ ส่ง token กลับไป frontend / Postman
+    // 4 ส่ง token กลับไป frontend / Postman
     res.json({ token });
 
   } catch (err) {
-    // 5️⃣ ถ้ามี error จาก DB / server
+    // 5 ถ้ามี error จาก DB / server
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
