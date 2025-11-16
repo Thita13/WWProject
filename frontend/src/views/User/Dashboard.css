@@ -197,4 +197,155 @@
 .badge.open { background: #3EC96E; }
 .badge.inprogress { background: #F2B100; }
 .badge.resolved { background: #FF781E; }
-.badge.closed { background: #C93E40; }
+.badge.closed { background: #fa191d; }
+
+/* ======================================= */
+/* == CSS สำหรับปุ่ม Status (Staff) == */
+/* ======================================= */
+
+/* (ทำให้ปุ่ม Delete อยู่ขวาสุดเสมอ) */
+.action-btns {
+  display: flex;
+  justify-content: flex-end; /* ดันปุ่มทั้งหมดไปขวา */
+  align-items: center;
+}
+.delete-btn {
+  margin-left: auto; /* (สำคัญ!) ดันปุ่ม Delete ไป "ขวาสุด" (แยกกลุ่ม) */
+}
+
+/* (สไตล์ของปุ่ม Staff) */
+.staff-action-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+  margin-right: 10px; /* เว้นช่องไฟระหว่างปุ่ม Staff */
+}
+
+/* 1. ปุ่ม "รับงาน" (สีฟ้า) */
+.staff-action-btn.accept {
+  background: #3B82F6; /* สีฟ้า (In Progress) */
+}
+.staff-action-btn.accept:hover {
+  background: #2563EB;
+}
+
+/* 2. ปุ่ม "ดำเนินการ" (สีส้ม) */
+.staff-action-btn.process {
+  background: #F59E0B; /* สีส้ม (Resolved) */
+}
+.staff-action-btn.process:hover {
+  background: #D97706;
+}
+
+/* 3. ปุ่ม "จบงาน" (สีเขียว) */
+.staff-action-btn.close-job {
+  background: #10B981; /* สีเขียว (Closed) */
+}
+.staff-action-btn.close-job:hover {
+  background: #059669;
+}
+
+/* ======================================= */
+/* == CSS สำหรับปุ่ม "Edit" (Admin) == */
+/* ======================================= */
+
+.staff-action-btn.edit {
+  background: #F59E0B; /* สีส้ม */
+  margin-right: 10px;
+}
+.staff-action-btn.edit:hover {
+  background: #D97706;
+}
+
+/* ======================================= */
+/* == CSS สำหรับ Modal (หน้า Pop-up) == */
+/* ======================================= */
+
+.modal-overlay {
+  position: fixed; /* 1. "ลอย" ทับทุกอย่าง */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6); /* 2. พื้นหลัง "มืด" */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 3. (สำคัญ!) ให้อยู่ "หน้าสุด" */
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1rem;
+}
+
+/* (สไตล์ของ Form ใน Modal) */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  box-sizing: border-box; /* (กันเหนียว) */
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end; /* 1. ดันปุ่มไปขวา */
+  gap: 0.5rem; /* 2. ช่องไฟระหว่างปุ่ม */
+}
+
+.modal-actions .btn-cancel {
+  padding: 0.6rem 1.2rem;
+  background: #eee;
+  border: 1px solid #ccc;
+  color: #333;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-actions .btn-submit {
+  padding: 0.6rem 1.2rem;
+  background: #4A2DBE; /* 1. (สำคัญ!) ใช้สีม่วงหลัก "ของเรา" */
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}

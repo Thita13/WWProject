@@ -10,6 +10,8 @@ import StaffDashboard from './views/Staff/Dashboard.jsx';
 import AdminDashboard from './views/Admin/Dashboard.jsx';
 import CreateTicketPage from './views/User/CreateTicket.jsx';
 import ViewTicketPage from './views/User/TicketDetail.jsx';
+import StaffViewTicket from './views/Staff/TicketDetail.jsx';
+import StaffAssignedPage from './views/Staff/Assigned.jsx';
 // 3. Import "ยาม" (เช็ค Path ให้ถูกต้อง, ปกติจะอยู่ที่ './components/ProtectedRoute.jsx')
 import ProtectedRoute from './components/ProtectedRoute.jsx'; 
 
@@ -44,11 +46,15 @@ function App() {
         {/* --- หน้า Staff --- */}
         <Route element={<ProtectedRoute allowedRoles={['staff', 'admin']} />}>
           <Route path="/staff" element={<StaffDashboard />} />
+          <Route path="/staff/assigned" element={<StaffAssignedPage />} />
+          <Route path="/staff/ticket/:id" element={<ViewTicketPage />} />
         </Route>
 
         {/* --- หน้า Admin --- */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
           <Route path="/admin" element={<AdminDashboard />} />
+          {/* (เราจะใช้ "ไฟล์" เดียวกับ User/Staff เพราะมัน "ฉลาด") */}
+          <Route path="/admin/ticket/:id" element={<ViewTicketPage />} />
         </Route>
 
         {/* --- 404 Not Found --- */}

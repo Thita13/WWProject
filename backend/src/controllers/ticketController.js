@@ -4,14 +4,17 @@ const db = require('../config/db');
 const getAllTickets = async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT t.id, t.title, t.description, t.priority, t.status, t.assigned_to, t.created_at, t.updated_at, u.name_user AS created_by
+      SELECT t.id, t.title, t.description, t.priority, t.status, 
+             t.assigned_to_id,  /* 1. (แก้ไข!) ต้องเป็น _id */
+             t.created_at, t.updated_at, 
+             u.name_user AS created_by
       FROM ticket t
       JOIN users u ON t.user_id = u.id
-    `);
-    res.json(rows);
+      ORDER BY t.created_at DESC /* 2. (เพิ่ม!) เรียงตามวันที่ (ใหม่สุดอยู่บน) */`);
+   res.json(rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+   console.error(err);
+   res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -154,6 +157,121 @@ const deleteTicket = async (req, res) => {
   }
 };
 
+// PATCH /api/tickets/:id/status - (ฟังก์ชันใหม่!)
+const updateTicketStatus = async (req, res) => {
+  const { id } = req.params; // ID ของ Ticket
+  const { status } = req.body; // สถานะใหม่ (เช่น "in_progress")
+  const staffId = req.user.id; // ID ของ Staff ที่กด (จาก Token)
+
+  // (เช็คสิทธิ์) ต้องเป็น Staff หรือ Admin เท่านั้น
+  if (req.user.role === 'user') {
+    return res.status(403).json({ message: 'Forbidden: Only staff/admin can change status.' });
+  }
+
+  try {
+    let query = 'UPDATE ticket SET status = ?';
+    let params = [status, id];
+
+    // (สำคัญ!) ตรรกะการอัปเดต 3 ขั้นตอนของคุณ
+    
+    // 1. จาก "open" ➜ "in_progress" (ปุ่ม "รับงาน")
+    if (status === 'in_progress') {
+      // (สำคัญ!) เมื่อรับงาน ให้ "ผูก" ticket นี้กับ staffId
+      // นี่คือหัวใจของ "My Assigned" ในอนาคต
+      query += ', assigned_to_id = ? WHERE id = ? AND (status = "open")'; 
+      params = [status, staffId, id];
+    } 
+    // 2. จาก "in_progress" ➜ "resolved" (ปุ่ม "ดำเนินการ")
+    else if (status === 'resolved') {
+      query += ' WHERE id = ? AND (status = "in_progress")';
+    } 
+    // 3. จาก "resolved" ➜ "closed" (ปุ่ม "จบงาน")
+    else if (status === 'closed') {
+      query += ' WHERE id = ? AND (status = "resolved")';
+    }
+    // (ถ้าสถานะแปลกๆ มา query จะไม่ทำงาน)
+    
+    const [result] = await db.query(query, params);
+
+    // (เช็คว่าอัปเดตสำเร็จไหม)
+    if (result.affectedRows === 0) {
+      // (ถ้ากดปุ่มผิดขั้นตอน เช่น กด "จบงาน" ทั้งที่ยังเป็น "open")
+      return res.status(400).json({ message: 'Invalid status transition or ticket not found.' });
+    }
+    
+    // (ส่ง Ticket "ตัวใหม่" ที่อัปเดตแล้ว กลับไปให้ Frontend)
+    const [updatedTicket] = await db.query('SELECT * FROM ticket WHERE id = ?', [id]);
+    res.json(updatedTicket[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// GET /api/tickets/assigned - (ฟังก์ชันใหม่!)
+// ดึง Ticket ที่ assigned ให้กับ Staff ที่ login อยู่
+const getMyAssignedTickets = async (req, res) => {
+  const staffId = req.user.id; // ID ของ Staff ที่ Login (จาก Token)
+
+  // (เช็คสิทธิ์) ต้องเป็น Staff หรือ Admin เท่านั้น
+  if (req.user.role === 'user') {
+    return res.status(403).json({ message: 'Forbidden: This route is for staff/admin only.' });
+  }
+
+  try {
+    // (สำคัญ!) ดึง Ticket เฉพาะที่ assigned_to_id (ที่เราเพิ่งสร้าง) ตรงกับ ID ของ Staff
+    const [rows] = await db.query(
+      'SELECT * FROM ticket WHERE assigned_to_id = ? ORDER BY id ASC',
+      [staffId]
+    );
+    res.json(rows);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+// PATCH /api/tickets/:id/admin - (ฟังก์ชันใหม่!)
+// อนุญาตให้ Admin แก้ไข title, priority, description ของ Ticket
+const adminUpdateTicket = async (req, res) => {
+  const { id } = req.params; // ID ของ Ticket
+  // (Admin แก้ได้ 3 อย่าง)
+  const { title, priority, description } = req.body; 
+
+  // (เช็คสิทธิ์) ต้องเป็น Admin เท่านั้น
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: Admin only.' });
+  }
+
+  // (เช็คว่าส่งข้อมูลมาครบ)
+  if (!title || !priority || !description) {
+    return res.status(400).json({ message: 'Title, priority, and description are required.' });
+  }
+
+  try {
+    // (อัปเดต 3 fields ห้ามแตะ status)
+    const [result] = await db.query(
+      'UPDATE ticket SET title = ?, priority = ?, description = ? WHERE id = ?',
+      [title, priority, description, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Ticket not found.' });
+    }
+    
+    // (ส่ง Ticket "ตัวใหม่" ที่อัปเดตแล้ว กลับไปให้ Frontend)
+    const [updatedTicket] = await db.query('SELECT * FROM ticket WHERE id = ?', [id]);
+    res.json(updatedTicket[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = { 
   getAllTickets,
   getTicketById,
@@ -161,5 +279,8 @@ module.exports = {
   getMyTickets,
   getCommentsForTicket,
   addComment,
-  deleteTicket 
+  deleteTicket,
+  updateTicketStatus,
+  getMyAssignedTickets,
+  adminUpdateTicket
 };

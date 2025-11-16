@@ -1,0 +1,128 @@
+/* frontend/src/views/Staff/Assigned.css */
+/* (นี่คือ CSS สำหรับ "การ์ด" โดยเฉพาะ) */
+
+.tickets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* 1. ช่องว่างระหว่าง "การ์ด" */
+}
+
+.ticket-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+  overflow: hidden; /* (ซ่อนขอบ) */
+}
+
+.ticket-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.ticket-header {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ticket-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1; /* 1. (สำคัญ!) ให้ขยายเต็มพื้นที่ (ดัน Priority ไปขวา) */
+}
+
+.ticket-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.ticket-row .label {
+  font-weight: 600;
+  color: #333;
+  width: 120px; /* 1. (สำคัญ!) "จอง" ที่ 120px ให้ Label */
+  flex-shrink: 0;
+}
+
+.ticket-row .value {
+  color: #555;
+}
+
+/* (นี่คือ Priority Badge (High, Medium, Low) ของเพื่อนคุณ) */
+.priority-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  height: fit-content; /* 1. (สำคัญ!) ให้ความสูงพอดี */
+}
+
+.priority-urgent  {
+  background: #ffeaea;
+  color: #fa0d0d;
+  border: 1px solid #c41c1c;
+}
+.priority-high {
+  background: #fff3eb;
+  color: #b95b0e;
+  border: 1px solid #c62828;
+}
+.priority-medium {
+  background: #fff3e0;
+  color: #836103;
+  border: 1px solid #ecb210;
+}
+.priority-low {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #2e7d32;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 0;
+}
+
+.ticket-footer {
+  padding: 1rem 1.5rem;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticket-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.meta-row {
+  font-size: 0.85rem;
+}
+.meta-label {
+  color: #777;
+}
+.meta-value {
+  color: #333;
+  font-weight: 500;
+}
+
+/* (ปุ่ม "Details" (ขวาล่าง)) */
+.details-btn {
+  padding: 0.6rem 1.5rem;
+  background: #4A2DBE; /* 1. (สำคัญ!) ใช้สีม่วงหลัก "ของเรา" */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.details-btn:hover {
+  background: #3a229a;
+}
