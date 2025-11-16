@@ -84,14 +84,14 @@ export default function AdminDashboard() {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>หัวข้อ</th>
+                  <th>Name</th>
+                  <th>Title</th>
                   <th>Priority</th>
                   <th>Status</th>
                   <th>Created</th>
                   <th></th>
                 </tr>
               </thead>
-              
               <tbody>
                 {tickets.map((t) => (
                   <tr key={t.id}>

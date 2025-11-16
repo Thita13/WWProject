@@ -10,7 +10,7 @@ const getAllTickets = async (req, res) => {
              u.name_user AS created_by
       FROM ticket t
       JOIN users u ON t.user_id = u.id
-      ORDER BY t.created_at DESC /* 2. (เพิ่ม!) เรียงตามวันที่ (ใหม่สุดอยู่บน) */`);
+      ORDER BY t.created_at DESC`);
    res.json(rows);
   } catch (err) {
    console.error(err);
@@ -69,7 +69,8 @@ const getMyTickets = async (req, res) => {
       `SELECT t.id, t.title, t.description, t.priority, t.status, t.created_at, u.name_user AS created_by
        FROM ticket t
        JOIN users u ON t.user_id = u.id
-       WHERE t.user_id = ?`, // ⬅️ (สำคัญ!) กรองด้วย user_id
+       WHERE t.user_id = ?
+       ORDER BY t.created_at DESC`,
       [userId]
     );
     res.json(rows);
