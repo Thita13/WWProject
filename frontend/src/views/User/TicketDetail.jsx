@@ -57,7 +57,7 @@ export default function UserTicketDetail() {
     }
   }, [id, navigate]);
 
-  // ⬇️ ⬇️ ⬇️ (ฟังก์ชัน "คืนชีพ" ➜ 1. Add Comment) ⬇️ ⬇️ ⬇️
+  //(ฟังก์ชัน➜ 1. Add Comment)
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
     try {
@@ -71,13 +71,13 @@ export default function UserTicketDetail() {
     }
   };
 
-  // ⬇️ ⬇️ ⬇️ (ฟังก์ชัน "คืนชีพ" ➜ 2. Logout) ⬇️ ⬇️ ⬇️
+  //(ฟังก์ชัน ➜ 2. Logout)
   const handleLogout = () => {
     authService.logout();
     navigate("/login");
   };
 
-  // ⬇️ ⬇️ ⬇️ (ฟังก์ชัน "คืนชีพ" ➜ 3. Update Status (Staff)) ⬇️ ⬇️ ⬇️
+  //(ฟังก์ชัน ➜ 3. Update Status (Staff))
   const handleUpdateStatus = async (newStatus) => {
     try {
       const updatedTicket = await ticketService.updateTicketStatus(id, newStatus);
@@ -132,7 +132,7 @@ export default function UserTicketDetail() {
     }
   };
 
-  // ⬇️ ⬇️ ⬇️ (เพิ่มฟังก์ชันใหม่! ➜ สำหรับ Modal) ⬇️ ⬇️ ⬇️
+  //(เพิ่มฟังก์ชันใหม่! ➜ สำหรับ Modal)
   const handleOpenEditModal = () => {
     if (!ticket) return;
     // (ดึงข้อมูล "ปัจจุบัน" ของ Ticket มาใส่ใน Form)
@@ -329,6 +329,44 @@ export default function UserTicketDetail() {
           )}
         </div>
       </div>
+    {currentUser && (currentUser.role === 'user' || currentUser.role === 'staff') && (
+      <div className="comment-section">
+                <h2>Comments</h2>
+                <div className="comment-list">
+                  {comments.length === 0 && (
+                    <div className="comment-item">No comments yet.</div>
+                  )}
+                  {comments.map((c) => (
+                    <div
+                      key={c.id}
+                      className={`comment-item ${
+                        c.user_id === authService.getCurrentUser().id ? "me" : "staff"
+                      }`}
+                    >
+                      <div className="comment-sender">
+                        {c.commenter_name || `User (ID: ${c.user_id})`}
+                      </div>
+                      <div className="comment-text">{c.message}</div>
+                      <div className="comment-time">{new Date(c.created_at).toLocaleString()}</div>
+                    </div>
+                  ))}
+                </div>
+                {/* Add Comment */}
+                {currentUser && (currentUser.role === 'user' || currentUser.role === 'staff') && (
+                <div className="comment-input-box">
+                  <textarea
+                    rows="3"
+                    placeholder="พิมพ์ข้อความ..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                  ></textarea>
+                  <button className="send-btn" onClick={handleAddComment}>
+                    ส่งข้อความ
+                  </button>
+                </div>
+                )}
+              </div>
+    )}
 
       {/* ⬇️ ⬇️ ⬇️ (เพิ่ม Modal!) ⬇️ ⬇️ ⬇️ */}
       {/* (Modal "แก้ไข" ของ Admin ➜ จะแสดงเมื่อ isEditModalOpen = true) */}

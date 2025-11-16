@@ -178,7 +178,7 @@ const updateTicketStatus = async (req, res) => {
     if (status === 'in_progress') {
       // (สำคัญ!) เมื่อรับงาน ให้ "ผูก" ticket นี้กับ staffId
       // นี่คือหัวใจของ "My Assigned" ในอนาคต
-      query += ', assigned_to_id = ? WHERE id = ? AND (status = "open")'; 
+      query += ', assigned_to = ? WHERE id = ? AND (status = "open")'; 
       params = [status, staffId, id];
     } 
     // 2. จาก "in_progress" ➜ "resolved" (ปุ่ม "ดำเนินการ")
@@ -222,7 +222,7 @@ const getMyAssignedTickets = async (req, res) => {
   try {
     // (สำคัญ!) ดึง Ticket เฉพาะที่ assigned_to_id (ที่เราเพิ่งสร้าง) ตรงกับ ID ของ Staff
     const [rows] = await db.query(
-      'SELECT * FROM ticket WHERE assigned_to_id = ? ORDER BY id ASC',
+      'SELECT * FROM ticket WHERE assigned_to = ? ORDER BY id ASC',
       [staffId]
     );
     res.json(rows);
