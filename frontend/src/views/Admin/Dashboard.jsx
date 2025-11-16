@@ -81,7 +81,17 @@ export default function AdminDashboard() {
           <div className="ticket-table-section">
             <h2 className="table-title">All Tickets</h2>
             <table className="ticket-table">
-              {/* ... (<thead> ➜ เหมือนเดิม) ... */}
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>หัวข้อ</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              
               <tbody>
                 {tickets.map((t) => (
                   <tr key={t.id}>
