@@ -20,7 +20,7 @@ export default function UserTicketDetail() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null); 
 
-  // ⬇️ ⬇️ ⬇️ (เพิ่ม State ใหม่!) ⬇️ ⬇️ ⬇️
+  // (เพิ่ม State ใหม่!)
   // (State สำหรับ Modal "แก้ไข" ของ Admin)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -57,10 +57,41 @@ export default function UserTicketDetail() {
     }
   }, [id, navigate]);
 
-  // (handleAddComment, handleLogout, handleUpdateStatus ➜ เหมือนเดิม)
-  const handleAddComment = async () => { /* ... (โค้ดเดิม) ... */ };
-  const handleLogout = () => { /* ... (โค้ดเดิม) ... */ };
-  const handleUpdateStatus = async (newStatus) => { /* ... (โค้ดเดิม) ... */ };
+  // ⬇️ ⬇️ ⬇️ (ฟังก์ชัน "คืนชีพ" ➜ 1. Add Comment) ⬇️ ⬇️ ⬇️
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      const payload = { message: newComment };
+      const addedComment = await ticketService.addComment(id, payload);
+      setComments((prev) => [...prev, addedComment]);
+      setNewComment("");
+    } catch (err) {
+      console.error('Failed to add comment', err);
+      alert('ไม่สามารถส่งคอมเมนต์ได้');
+    }
+  };
+
+  // ⬇️ ⬇️ ⬇️ (ฟังก์ชัน "คืนชีพ" ➜ 2. Logout) ⬇️ ⬇️ ⬇️
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/login");
+  };
+
+  // ⬇️ ⬇️ ⬇️ (ฟังก์ชัน "คืนชีพ" ➜ 3. Update Status (Staff)) ⬇️ ⬇️ ⬇️
+  const handleUpdateStatus = async (newStatus) => {
+    try {
+      const updatedTicket = await ticketService.updateTicketStatus(id, newStatus);
+      setTicket(updatedTicket); 
+      alert(`อัปเดตสถานะเป็น ${newStatus} สำเร็จ`);
+    } catch (err) {
+      console.error('Failed to update status', err);
+      if (err.response && err.response.status === 400) {
+        alert('อัปเดตสถานะไม่สำเร็จ: กดปุ่มผิดขั้นตอน (Invalid transition)');
+      } else {
+        alert('อัปเดตสถานะไม่สำเร็จ');
+      }
+    }
+  };
 
   // (อัปเกรด!) "ฟังก์ชันลบ" (ฉลาด) ➜ ใช้ได้ทั้ง User และ Admin
   const handleDelete = async () => {
@@ -158,7 +189,7 @@ export default function UserTicketDetail() {
         {/* --- เมนู Staff --- */}
         {currentUser && currentUser.role === 'staff' && (
           <nav>
-            <div className="nav-item" onClick={() => navigate("/staff")}>Dashboard (All)</div>
+            <div className="nav-item" onClick={() => navigate("/staff")}>Dashboard</div>
             <div className="nav-item" onClick={() => navigate("/staff/assigned")}>My Assigned</div>
             <div className="nav-item active">Ticket Detail</div>
           </nav>

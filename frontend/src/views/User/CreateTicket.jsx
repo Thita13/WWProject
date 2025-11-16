@@ -132,7 +132,7 @@ export default function CreateTicket() {
 
             {/* Attachment (Disabled) */}
             <div className="form-group">
-              <label>Attachment / แนบไฟล์ (ยังไม่เปิดใช้งาน)</label>
+              <label>Attachment / แนบไฟล์</label>
               <div className="file-box">
                 <input
                   type="file"

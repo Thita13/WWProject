@@ -5,7 +5,7 @@ const getAllTickets = async (req, res) => {
   try {
     const [rows] = await db.query(`
       SELECT t.id, t.title, t.description, t.priority, t.status, 
-             t.assigned_to_id,  /* 1. (แก้ไข!) ต้องเป็น _id */
+             t.assigned_to,  /* 1. (แก้ไข!) ต้องเป็น _id */
              t.created_at, t.updated_at, 
              u.name_user AS created_by
       FROM ticket t
